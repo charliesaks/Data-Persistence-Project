@@ -12,19 +12,20 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
+    public Text HiScoreText;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-        
+
         int[] pointCountArray = new [] {1,1,2,2,5,5};
         for (int i = 0; i < LineCount; ++i)
         {
@@ -36,6 +37,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        DisplayHiScore();
     }
 
     private void Update()
@@ -72,5 +75,18 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+
+        if (m_Points > DataManager.instance.hiScore)
+        {
+            DataManager.instance.hiScorer = DataManager.instance.playerName;
+            DataManager.instance.hiScore = m_Points;
+            DataManager.instance.SaveHiScore();
+            DisplayHiScore();
+        }
+    }
+
+    public void DisplayHiScore()
+    {
+        HiScoreText.text = $"Best Score : {DataManager.instance.hiScorer} : {DataManager.instance.hiScore}";
     }
 }
